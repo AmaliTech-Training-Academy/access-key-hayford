@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-f@m!ka-^v)%=fb_rj-oh0f76pclz=7urc2ay5ggr47d5y^@35v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
-LOGIN_URL = '/login/'
+# LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'account',
+    # 'management',
 ]
 
 MIDDLEWARE = [

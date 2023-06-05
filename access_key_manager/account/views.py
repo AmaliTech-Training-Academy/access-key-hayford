@@ -30,7 +30,7 @@ def signup(request):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            message=render_to_string('authentication_app/account_activation.html', {
+            message=render_to_string('account/account_activation.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -41,10 +41,10 @@ def signup(request):
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [user.email]
             send_mail( mail_subject, message, email_from, recipient_list )
-            return render(request, 'authentication_app/email_verification.html')
+            return render(request, 'account/email_verification.html')
     else:
         form = SignupForm()
-    return render(request, 'authentication_app/signup.html', {'form': form})
+    return render(request, 'account/signup.html', {'form': form})
 
 
 
@@ -63,7 +63,7 @@ def activate(request, uidb64, token):
         return redirect('/login/')
         
     else:
-        return render(request, 'authentication_app/activation_404.html')
+        return render(request, 'account/activation_404.html')
 
 
 
@@ -74,19 +74,18 @@ def signin(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
                 if next_url:
                     return render(next_url)
                 else:
-                    return redirect('filesystem:upload_list')
+                    return redirect('/admin/')
             else:
                 return render(request, 'login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
-    return render(request, 'authentication_app/login.html', {'form': form, 'next': next_url})
-
+    return render(request, 'account/login.html', {'form': form, 'next': next_url})
 
 
 def signout(request):
@@ -108,7 +107,7 @@ def password_reset(request):
                 current_site = get_current_site(request)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
                 token = default_token_generator.make_token(user)
-                email_body = render_to_string('authentication_app/password_reset/password_reset_email.html', {
+                email_body = render_to_string('account/password/password_reset_email.html', {
                     'user': user,
                     'domain': current_site.domain,
                     'uid': uid,
@@ -120,13 +119,13 @@ def password_reset(request):
                 email_body = strip_tags(email_body)
                 email = send_mail(email_subject, email_body, from_email=settings.EMAIL_HOST_USER, recipient_list=[user.email])
                 # email.send()
-                return render(request, 'authentication_app/password_reset/password_reset_done.html')
+                return render(request, 'account/password/password_reset_done.html')
                 
             except CustomUser.DoesNotExist:
                 form.add_error(None, 'Email address not found, try again')
     else:
         form = PasswordResetForm()
-    return render(request, 'authentication_app/password_reset/password_reset_form.html', {'form': form})
+    return render(request, 'account/password/password_reset_form.html', {'form': form})
 
 
 
@@ -143,12 +142,12 @@ def resetPage(request):
         
     else:
         form = LoginForm()
-    return render(request, 'authentication_app/password_reset/password_reset_form.html')
+    return render(request, 'account/password/password_reset_form.html')
 
 
 # @csrf_protect
 def resetPageDone(request):
-     return render(request, 'authentication_app/password_reset/password_reset_done.html')
+     return render(request, 'account/password/password_reset_done.html')
 
 
 
@@ -170,9 +169,9 @@ def reset_password_confirm(request, uidb64, token):
                 user =authenticate(request, email=user.email, password=new_password)
                 login(request, user)
                 
-                return render(request, 'authentication_app/password_reset/password_reset_complete.html')
+                return render(request, 'account/password/password_reset_complete.html')
         else:
             form = PasswordChangeForm()
-        return render(request, 'authentication_app/password_reset/password_reset_confirm.html', {'form': form})
+        return render(request, 'account/password/password_reset_confirm.html', {'form': form})
     else:
-        return render(request, 'authentication_app/password_reset/404.html')
+        return render(request, 'account/password/404.html')

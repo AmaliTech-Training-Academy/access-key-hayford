@@ -8,6 +8,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Please, provide an email address')
         if not password:
             raise ValueError('Please, provide a password')
+        
         try:
             user = self.model(
                 email=self.normalize_email(email),
@@ -18,7 +19,21 @@ class CustomUserManager(BaseUserManager):
             user.save()
             return user
         except:
-            raise ValueError('Please, try again')
+            raise ValueError('Please, try again.')
+        
+    def create_superuser(self, email, password = None, **extra_fields):
+        try:
+            user = self.model(
+                email,
+                password = password,
+                is_admin=True,
+                is_superuser=True,
+                is_staff=True,
+                **extra_fields
+            )
+            return user
+        except:
+            raise ValueError('An error occurred. Please,try again.')
             
         
 class CustomUser(AbstractUser):
@@ -28,6 +43,6 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     objects = CustomUserManager()
-
+    
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'

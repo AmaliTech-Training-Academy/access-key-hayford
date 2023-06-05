@@ -8,12 +8,12 @@ class SignupForm(forms.ModelForm):
     confirmPassword = forms.CharField(widget=forms.PasswordInput, label='Confirm Password', required=True)
     class Meta:
         model = CustomUser
-        fields = [ 'email', 'password', 'confirmPassword']
+        fields = [ 'email', 'password']
 
     def clean_password2(self):
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('confirmPassword')
-        if password and password2 and password2 != password:
+        if password and password2 and password != password2:
             raise forms.ValidationError('Password does not match')
         validator = PasswordValidator()
         validator.validate(password)

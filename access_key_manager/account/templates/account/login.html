@@ -1,4 +1,4 @@
-{% extends 'filesystem/base.html' %}
+{% comment %} {% extends 'filesystem/base.html' %} {% endcomment %}
 {% comment %} {% load static %}
 
 {% block head %}
@@ -11,12 +11,12 @@
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button class="button_01" type="submit">Log In</button>
-            <p><a href="{% url 'authentication_app:reset_page' %}">Forget Password</a></p>
+            <button>Log In</button>
+            <p><a href="{% url 'account:reset_page' %}">Forget Password</a></p>
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}"/>
             {% endif %}
-            <p>Don't have an account? <a href="{% url 'authentication_app:signup' %}">Sign Up</a></p>
+            <p>Don't have an account? <a href="{% url 'account:signup' %}">Sign Up</a></p>
         </form>
     </div>
 {% endblock %}

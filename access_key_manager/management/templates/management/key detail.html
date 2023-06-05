@@ -1,0 +1,14 @@
+<html>
+<head>
+    <title>Key Detail</title>
+</head>
+<body>
+    <h1>Key Detail</h1>
+    <p>Name: {{ key.name }}</p>
+    <p>Description: {{ key.description }}</p>
+    <p>Expiration Date: {{ key.expiration_date }}</p>
+    {% if request.user.is_superuser %}
+        <p><a href="/revoke-key/{{ key.id }}">Revoke Key</a></p>
+    {% endif %}
+</body>
+</html>
