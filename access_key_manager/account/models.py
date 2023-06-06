@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password = None, *args, **kwargs):
+    def create_user(self, email, password=None, *args, **kwargs):
         if not email:
             raise ValueError('Please, provide an email address')
         if not password:
@@ -21,15 +21,16 @@ class CustomUserManager(BaseUserManager):
         except:
             raise ValueError('Please, try again.')
         
-    def create_superuser(self, email, password = None, **extra_fields):
+    def create_superuser(self, email, password = None, *args, **kwargs):
         try:
-            user = self.model(
+            user = self.create_user(
                 email,
                 password = password,
                 is_admin=True,
                 is_superuser=True,
                 is_staff=True,
-                **extra_fields
+                *args,
+                **kwargs
             )
             return user
         except:
@@ -42,7 +43,9 @@ class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
-    objects = CustomUserManager()
+    
     
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
+    
+    objects = CustomUserManager()

@@ -60,7 +60,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('/login/')
+        return redirect('/account/login/')
         
     else:
         return render(request, 'account/activation_404.html')
@@ -84,7 +84,7 @@ def signin(request):
                 else:
                     return redirect('/admin/')
             else:
-                return render(request, 'login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
+                return render(request, 'account/login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
     return render(request, 'account/login.html', {'form': form, 'next': next_url})
 
 
