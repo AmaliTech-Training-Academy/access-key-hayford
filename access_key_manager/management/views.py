@@ -1,6 +1,11 @@
+# import from rest_framework library
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
-from .forms import AccessKeyForm
+from .forms import AccessKeyForm, MailForm
 import datetime as dt
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -15,14 +20,15 @@ from .models import *
 class ListView(ListView):
     model = Key
     template_name = 'management/key_detail.html'
-    ordering = ['name']
+    ordering = ['user']
 
 def revoke_key(request, pk):
     access_key_by_id = get_object_or_404(Key, id=pk)
     access_key_by_id.status = 'revoked'
     access_key_by_id.save()
     messages.success(request,'Access-key has been revoked successfully')
-    return redirect('adminapp:access_key_list')
+    return redirect('management:key_list')
+    # return render(request, 'management/key_list.html')
 
 def generate_key(request, pk):
     form = AccessKeyForm()
@@ -62,14 +68,25 @@ def update_key(request, pk):
     if request.method == 'POST':
         form = AccessKeyForm(request.POST, instance= access_key)
         if form.is_valid():
-            if access_key.expiry_date and access_key.expiry_date < dt.date.today():
+            if access_key.expiry_date and access_key.expiry_date.date() < dt.date.today():
                 messages.warning(request, 'Expiry date cannot be in the past')
-                return redirect('management:access_key_update', access_key.id)
+                return redirect('management:update_key', access_key.pk)
             else:
                 access_key.expiry_date = form.cleaned_data['expiry_date']
             access_key.save()
             messages.success(request,'Access-key has been Updated')
-            return redirect('management:access_key_list')
+            return redirect('management:key_list')
     else:
         form = AccessKeyForm(instance= access_key)
-    return render(request, 'management/access_key_update.html',{'form':form, 'access_key': access_key})
+    return render(request, 'management/api_update_form.html', {'form':form, 'access_key': access_key})
+
+
+class AccessKeyViewAPI(APIView):
+    def get(self, request):
+        form = MailForm(request.GET)
+        if request.method == 'GET':
+            email = request.cleaned_data['email']
+            school = School.objects.get()
+            key = Key.objects.get(status=Key.status['active'])
+            return Response(serializers.data)
+        return render(request, '/management/api-form.html')

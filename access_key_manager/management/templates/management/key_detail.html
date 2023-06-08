@@ -4,11 +4,16 @@
 </head>
 <body>
     <h1>Key Detail</h1>
-    <p>Name: {{ key.name }}</p>
-    <p>Description: {{ key.description }}</p>
-    <p>Expiration Date: {{ key.expiration_date }}</p>
+    {% comment %} {% for user in users %} {% endcomment %}
+    <p>User: {{ key.user }} of {{key.school}}</p>
+    <p>Key: {{ key.key }}</p>
+    <p>Status: {{ key.status }}</p>
+    <p>Procurement Date: {{ key.date_of_procurement }}</p>
+    <p>Expiration Date: {{ key.expiry_date }}</p>
     {% if request.user.is_superuser %}
-        <p><a href="/revoke-key/{{ key.id }}">Revoke Key</a></p>
+        <p><a href="/{{ key.id }}/revoke">Revoke Key</a></p>
+        {% comment %} <p><a href="{% url 'management:revoke_key' %}">Revoke Key</a></p> {% endcomment %}
     {% endif %}
+    {% comment %} {% endfor %} {% endcomment %}
 </body>
 </html>
