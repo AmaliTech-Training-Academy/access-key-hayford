@@ -13,5 +13,5 @@ urlpatterns = [
 
     path('school/', school_dashboard, name='access_key_list'),
     # path('<int:pk>/school/', school_dashboard, name='access_key_list'),
-    path('school/<int:pk>/list', School_key_view, name='access_key_list'),
+    path('<int:pk>/list/', School_key_view, name='school_key_view'),
 ]

@@ -120,6 +120,6 @@ def key_request(request, pk):
 
 def School_key_view(request, pk):
     user = request.user
-    school = School.objects.get( id=pk)
-    key = Key.objects.get(school=school)
-    return redirect('management/dashboard', {'school':school.pk, 'key':key, 'user':user})
+    school = get_object_or_404(School, id=pk)
+    key = Key.objects.filter(school=school)
+    return render('school/dashboard.html', {'school':school, 'key':key, 'user':user})
