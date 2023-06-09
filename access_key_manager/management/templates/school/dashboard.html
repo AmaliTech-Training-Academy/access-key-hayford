@@ -1,11 +1,14 @@
-{% comment %} <html>
+
+<html>
 <head>
     <title>Dashboard</title>
 </head>
 <body>
+    {% for key in School_id %}
     <h1>Dashboard</h1>
-    <p>School_id: {{ key.name }}</p>
-    <p>Email: {{ key.name }}</p>
-    <p>Account Status: {{ key.description }}</p>
+    <p>School_id: {{ school }}</p>
+    <p>Email: {{ user }}</p>
+    {% comment %} <p>Account Status: {{ key.description }}</p> {% endcomment %}
+    {% endfor %}
 </body>
-</html> {% endcomment %}
+</html>

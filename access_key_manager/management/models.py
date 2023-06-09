@@ -26,10 +26,18 @@ class Key(models.Model):
 
 class School(models.Model):
     name= models.CharField(max_length= 255)
-    user= models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user= models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} {self.user}'
+    
+
+# class SchoolAccount(models.Model):
+#     name = models.ForeignKey('School', on_delete=models.CASCADE)
+#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#         return self.name
     
 
     

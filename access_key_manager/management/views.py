@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
-from .forms import AccessKeyForm, MailForm
+from .forms import AccessKeyForm, MailForm, SchoolForm
 import datetime as dt
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -14,6 +14,7 @@ from django.utils.html import strip_tags
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import *
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -90,3 +91,35 @@ class AccessKeyViewAPI(APIView):
             key = Key.objects.get(status=Key.status['active'])
             return Response(serializers.data)
         return render(request, '/management/api-form.html')
+    
+
+
+
+
+#School Dashboard 
+def school_dashboard(request):
+    form = SchoolForm()
+    if request.method == 'POST':
+        form = SchoolForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            name = form.cleaned_data['name']
+            school = School.objects.create(name=name,  user=user)
+            school.save()
+            return redirect('management:access_key_list',  id=school.id)
+        else:
+            form = SchoolForm()
+    return render(request,'school/school_view.html', {'form':form})
+
+
+def key_request(request, pk):
+    school = School.objects.get(id=pk)
+    context = {'school':school}
+    return render(request,'school/key_request.html', context)
+
+
+def School_key_view(request, pk):
+    user = request.user
+    school = School.objects.get( id=pk)
+    key = Key.objects.get(school=school)
+    return redirect('management/dashboard', {'school':school.pk, 'key':key, 'user':user})

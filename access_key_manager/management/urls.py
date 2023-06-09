@@ -10,4 +10,8 @@ urlpatterns = [
     path('<str:pk>/revoke', revoke_key, name='revoke_key'),
     path('api/', AccessKeyViewAPI.as_view(), name='access_key_view_api'),
     # path('---------/', --------, name=''),
+
+    path('school/', school_dashboard, name='access_key_list'),
+    # path('<int:pk>/school/', school_dashboard, name='access_key_list'),
+    path('school/<int:pk>/list', School_key_view, name='access_key_list'),
 ]
