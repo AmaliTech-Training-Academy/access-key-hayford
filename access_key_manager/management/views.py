@@ -15,6 +15,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import *
 from django.contrib.auth.models import User
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_protect
 
 
 # Create your views here.
@@ -22,6 +24,7 @@ class ListView(ListView):
     model = Key
     template_name = 'management/key_detail.html'
     ordering = ['user']
+    
 
 def revoke_key(request, pk):
     access_key_by_id = get_object_or_404(Key, id=pk)
@@ -93,33 +96,42 @@ class AccessKeyViewAPI(APIView):
         return render(request, '/management/api-form.html')
     
 
-
-
-
-#School Dashboard 
-def school_dashboard(request):
+#School Dashboard
+@csrf_protect
+def school_dashboard(request, pk=None):
     form = SchoolForm()
     if request.method == 'POST':
         form = SchoolForm(request.POST)
         if form.is_valid():
             user = request.user
             name = form.cleaned_data['name']
-            school = School.objects.create(name=name,  user=user)
+            school = School.objects.create(name=name, user=user)
             school.save()
-            return redirect('management:access_key_list',  id=school.id)
-        else:
-            form = SchoolForm()
+            return redirect(reverse('management:school_key_view', kwargs ={'pk':school.pk}))
+        # else:
+        #     form = SchoolForm()
     return render(request,'school/school_view.html', {'form':form})
 
 
 def key_request(request, pk):
     school = School.objects.get(id=pk)
     context = {'school':school}
-    return render(request,'school/key_request.html', context)
+    return render(request, 'school/key_request.html', context)
+    # return redirect('management:key_request', context )
 
 
 def School_key_view(request, pk):
     user = request.user
     school = get_object_or_404(School, id=pk)
-    key = Key.objects.filter(school=school)
-    return render('school/dashboard.html', {'school':school, 'key':key, 'user':user})
+    # key = get_object_or_404(Key, school=school.pk)
+    key = Key.objects.get(school=school.pk)
+    return render(request, 'school/dashboard.html', {'school':school, 'key':key, 'user':user})
+
+
+# def new_acess_key_request(request, pk):
+#     school = get_object_or_404(School, id=pk)
+#     key = get_object_or_404(Key, School=school.pk)
+#     if key:
+#         messages.warning(request, 'Expiry date cannot be in the past')
+#         return redirect('management:update_key', access_key.pk)
+#     return render(request, 'school/new_acess_key.html')

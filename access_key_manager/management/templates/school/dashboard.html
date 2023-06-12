@@ -4,11 +4,12 @@
     <title>Dashboard</title>
 </head>
 <body>
-    {% comment %} {% for key in School_id %} {% endcomment %}
     <h1>Dashboard</h1>
-    <p>School_id: {{ school }}</p>
-    <p>Email: {{ user }}</p>
-    {% comment %} <p>Account Status: {{ key.description }}</p> {% endcomment %}
-    {% comment %} {% endfor %} {% endcomment %}
+    <p>User: {{ user }}</p>
+    {% comment %} <p>School name: {{ school.name }}</p> {% endcomment %}
+    <p>Key: {{ key }}</p>
+    <p>Account Status: {{ key.status }}</p>
+    <p>Procurement Date: {{ key.date_of_procurement }}</p>
+    <p>Expiration Date: {{ key.expiry_date }}</p>
 </body>
 </html>

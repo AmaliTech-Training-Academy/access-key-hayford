@@ -15,7 +15,7 @@ class Key(models.Model):
     school = models.ForeignKey('School', on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
-        return f'{self.status}{self.key}{self.expiry_date}{self.date_of_procurement}{self.school}{self.user.username}'
+        return self.key
 
     # def __str__(self):
     #     return f'Key {self.id} for user {self.user.username}'
@@ -26,18 +26,14 @@ class Key(models.Model):
 
 class School(models.Model):
     name= models.CharField(max_length= 255)
-    user= models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    # user= models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} {self.user}'
+        return f'{self.name}'
     
 
-# class SchoolAccount(models.Model):
-#     name = models.ForeignKey('School', on_delete=models.CASCADE)
-#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
-#     def __str__(self):
-#         return self.name
     
 
     

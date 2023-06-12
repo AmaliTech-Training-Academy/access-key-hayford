@@ -4,10 +4,11 @@
 </head>
 <body>
     <h1>Key Detail</h1>
-    {% comment %} {% for user in users %} {% endcomment %}
-    <p>User: {{ key.user }} of {{key.school}}</p>
-    <p>Key: {{ key.key }}</p>
-    <p>Status: {{ key.status }}</p>
+    {% comment %} {% for user in user %} {% endcomment %}
+    <p>User: {{ user }}</p>
+    {% comment %} <p>School name: {{ school.name }}</p> {% endcomment %}
+    <p>Key: {{ key }}</p>
+    <p>Account Status: {{ key.status }}</p>
     <p>Procurement Date: {{ key.date_of_procurement }}</p>
     <p>Expiration Date: {{ key.expiry_date }}</p>
     {% if request.user.is_superuser %}

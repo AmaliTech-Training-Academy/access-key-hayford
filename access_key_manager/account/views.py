@@ -16,6 +16,8 @@ from django.views.decorators.csrf import csrf_protect
 from .forms import SignupForm, LoginForm, PasswordChangeForm
 from .models import CustomUser
 from .tokens import account_activation_token
+from django.contrib import messages
+from management.models import School
 
 # Create your views here.
 # @csrf_protect
@@ -67,7 +69,7 @@ def activate(request, uidb64, token):
 
 
 
-# @csrf_protect
+@csrf_protect
 def signin(request):
     form = LoginForm(data=request.POST)
     next_url = request.GET.get('next')
@@ -77,16 +79,22 @@ def signin(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(email=email, password=password)
+            # return redirect('management:school')
             if user is not None:
                 login(request, user)
                 if next_url:
-                    return render(next_url)
+                    return redirect(next_url)
+                if user.is_superuser:
+                    messages.success(request, 'Welcome, Micro-Focus Admin!')
+                    return redirect('management:key_list')
                 else:
-                    return redirect('/admin/')
-                    # return redirect('filesystem:upload_list')
+                    school =School.objects.get(user=user)
+                    messages.success(request, 'Welcome, School IT Personnel!')
+                    return redirect('management:school')
             else:
                 return render(request, 'account/login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
     return render(request, 'account/login.html', {'form': form, 'next': next_url})
+
 
 
 def signout(request):
