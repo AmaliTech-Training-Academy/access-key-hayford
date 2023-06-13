@@ -2,7 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
-
+from django.http import Http404
+from .serializers import *
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from .forms import AccessKeyForm, MailForm, SchoolForm
@@ -17,13 +18,17 @@ from .models import *
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@method_decorator(login_required, name='dispatch')
 class ListView(ListView):
     model = Key
     template_name = 'management/key_detail.html'
-    ordering = ['user']
+    ordering = ['date_of_procurement']
+    context_object_name = 'list'
+    paginate_by = 5
     
 
 def revoke_key(request, pk):
@@ -87,17 +92,22 @@ def update_key(request, pk):
 
 class AccessKeyViewAPI(APIView):
     def get(self, request):
-        form = MailForm(request.GET)
-        if request.method == 'GET':
-            email = request.cleaned_data['email']
-            school = School.objects.get()
-            key = Key.objects.get(status=Key.status['active'])
-            return Response(serializers.data)
-        return render(request, '/management/api-form.html')
-    
+        form = MailForm(request.GET or None)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = CustomUser.objects.get(email=email)
+                school = get_object_or_404(School, user=user)
+                key = get_object_or_404(Key, school=school)
+                serializers = ProjectSerializer(key)
+                return Response(serializers.data)
+            except (School.DoesNotExist, CustomUser.DoesNotExist):
+                return Http404
+        return render(request, 'management/api_form.html', {'form': form})
+        
 
 #School Dashboard
-@csrf_protect
+@method_decorator(login_required, name='dispatch')
 def school_dashboard(request, pk=None):
     form = SchoolForm()
     if request.method == 'POST':

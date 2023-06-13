@@ -27,6 +27,7 @@ class SchoolForm(forms.ModelForm):
         fields=('name',) 
 
 
-class MailForm(forms.ModelForm):
-    email = forms.EmailField()
+class MailForm(forms.Form):
+    email = forms.EmailField(max_length=200, required=True)
+
 

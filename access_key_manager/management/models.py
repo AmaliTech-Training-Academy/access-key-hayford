@@ -4,11 +4,14 @@ from account.models import CustomUser
 # Create your models here.
 class Key(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    ACTIVE = 'active'
+    EXPIRED = 'expired'
+    REVOKED = 'revoked'
     status = models.CharField(max_length=10, choices=(
-        ('active', 'Active'),
-        ('expired', 'Expired'),
-        ('revoked', 'Revoked'),
-    ))
+        (ACTIVE, 'Active'),
+        (EXPIRED, 'Expired'),
+        (REVOKED, 'Revoked'),
+    ), default= ACTIVE)
     key = models.CharField(max_length=32, unique=True)
     date_of_procurement = models.DateTimeField(auto_now_add=True)
     expiry_date = models.DateTimeField()
