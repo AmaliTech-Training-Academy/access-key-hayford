@@ -18,6 +18,7 @@ from .models import CustomUser
 from .tokens import account_activation_token
 from django.contrib import messages
 from management.models import School
+from django.urls import reverse
 
 # Create your views here.
 # @csrf_protect
@@ -62,7 +63,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('/account/login/')
+        return redirect('/key/school/')
         
     else:
         return render(request, 'account/activation_404.html')
@@ -72,14 +73,14 @@ def activate(request, uidb64, token):
 @csrf_protect
 def signin(request):
     form = LoginForm(data=request.POST)
-    next_url = request.GET.get('next')
+    next_url = request.GET.get('next', '')
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
+        print(form.is_valid)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=password)
-            # return redirect('management:school')
+            user = authenticate(username=email, password=password)
             if user is not None:
                 login(request, user)
                 if next_url:
@@ -87,12 +88,15 @@ def signin(request):
                 if user.is_superuser:
                     messages.success(request, 'Welcome, Micro-Focus Admin!')
                     return redirect('management:key_list')
+                    # return HttpResponse('<h1>hello</h1>')
                 else:
                     school =School.objects.get(user=user)
                     messages.success(request, 'Welcome, School IT Personnel!')
-                    return redirect('management:school')
+                    return redirect('management:school_key_view',school_id=school.pk)
+                    # return HttpResponse('<h1>hello, School IT Personnel</h1>')
             else:
-                return render(request, 'account/login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
+                # return render(request, 'account/login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
+                return HttpResponse('Bad credentials')
     return render(request, 'account/login.html', {'form': form, 'next': next_url})
 
 

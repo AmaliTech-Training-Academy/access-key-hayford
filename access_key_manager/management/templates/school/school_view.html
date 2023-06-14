@@ -2,20 +2,10 @@
 
 {% block content %}
   <h1>Registration of School</h1>
-  <form method="POST" action=''>
+  <form method="POST">
     {% csrf_token %}
-    {% if form.errors %}
-        <div class="alert alert-danger">
-            <ul>
-                {% for field in form %}
-                {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
     {{ form.as_p }}
     <button type="submit">Register</button>
   </form>
+  <a href="{% url 'account:logout' %}">Logout</a>
 {% endblock %}

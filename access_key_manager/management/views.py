@@ -20,6 +20,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -30,7 +31,7 @@ class ListView(ListView):
     context_object_name = 'list'
     paginate_by = 5
     
-
+@login_required
 def revoke_key(request, pk):
     access_key_by_id = get_object_or_404(Key, id=pk)
     access_key_by_id.status = 'revoked'
@@ -39,6 +40,7 @@ def revoke_key(request, pk):
     return redirect('management:key_list')
     # return render(request, 'management/key_list.html')
 
+@login_required
 def generate_key(request, pk):
     form = AccessKeyForm()
     user = request.user
@@ -71,7 +73,7 @@ def generate_key(request, pk):
             form = AccessKeyForm()
     return render(request, 'management/access_key_generate.html',{'form':form, 'schools': user_by_id})
 
-
+@login_required
 def update_key(request, pk):
     access_key = get_object_or_404(Key, id=pk)
     if request.method == 'POST':
@@ -89,7 +91,7 @@ def update_key(request, pk):
         form = AccessKeyForm(instance= access_key)
     return render(request, 'management/api_update_form.html', {'form':form, 'access_key': access_key})
 
-
+@method_decorator(login_required, name='dispatch')
 class AccessKeyViewAPI(APIView):
     def get(self, request):
         form = MailForm(request.GET or None)
@@ -97,8 +99,10 @@ class AccessKeyViewAPI(APIView):
             email = form.cleaned_data['email']
             try:
                 user = CustomUser.objects.get(email=email)
-                school = get_object_or_404(School, user=user)
+                # school = get_object_or_404(School, user=user)
+                school = School.objects.get(user=user)
                 key = get_object_or_404(Key, school=school)
+                # key = Key.objects.get(status=Key.ACTIVE, school = school)
                 serializers = ProjectSerializer(key)
                 return Response(serializers.data)
             except (School.DoesNotExist, CustomUser.DoesNotExist):
@@ -107,7 +111,22 @@ class AccessKeyViewAPI(APIView):
         
 
 #School Dashboard
-@method_decorator(login_required, name='dispatch')
+@login_required
+# @method_decorator(login_required, name='dispatch')
+def School_key_view(request, pk):
+    user = request.user
+    school = get_object_or_404(School, id=pk)
+    # key = get_object_or_404(Key, school=school.pk)
+    key = Key.objects.filter(school=school).order_by('date_of_procurement')
+    paginator = Paginator(key, 1) 
+    page_number = request.GET.get('page')
+    page_object = paginator.get_page(page_number)
+    paginate_by = 2
+    return render(request, 'school/dashboard.html', {'school':school, 'user':user, 'page_obj': page_object})
+
+
+# @method_decorator(login_required, name='dispatch')
+@login_required
 def school_dashboard(request, pk=None):
     form = SchoolForm()
     if request.method == 'POST':
@@ -118,27 +137,28 @@ def school_dashboard(request, pk=None):
             school = School.objects.create(name=name, user=user)
             school.save()
             return redirect(reverse('management:school_key_view', kwargs ={'pk':school.pk}))
-        # else:
-        #     form = SchoolForm()
+            # return redirect('management:school_key_view', school_id=school.pk)
+        else:
+            form = SchoolForm()
     return render(request,'school/school_view.html', {'form':form})
+
+
+# def key_request(request, pk):
+#     school = School.objects.get(id=pk)
+#     context = {'school':school}
+#     return render(request, 'school/key_request.html', context)
+#     # return redirect('management:key_request', context )
+
 
 
 def key_request(request, pk):
     school = School.objects.get(id=pk)
-    context = {'school':school}
-    return render(request, 'school/key_request.html', context)
-    # return redirect('management:key_request', context )
-
-
-def School_key_view(request, pk):
-    user = request.user
-    school = get_object_or_404(School, id=pk)
-    # key = get_object_or_404(Key, school=school.pk)
-    key = Key.objects.get(school=school.pk)
-    return render(request, 'school/dashboard.html', {'school':school, 'key':key, 'user':user})
-
-
-# def new_acess_key_request(request, pk):
+    key = Key.objects.filter(school=school, status=Key.ACTIVE)
+    if key is None:
+        return redirect('management:generate_key', id=school.id)
+    else:
+        messages.warning(request, 'You have an active key already')
+        return redirect('management:school_key_view', id=school.id)
 #     school = get_object_or_404(School, id=pk)
 #     key = get_object_or_404(Key, School=school.pk)
 #     if key:

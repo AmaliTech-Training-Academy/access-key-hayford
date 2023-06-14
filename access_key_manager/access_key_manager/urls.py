@@ -23,3 +23,5 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('key/', include('management.urls')),
 ]
+
+

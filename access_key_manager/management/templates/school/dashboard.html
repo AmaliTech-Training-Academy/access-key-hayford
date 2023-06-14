@@ -5,11 +5,45 @@
 </head>
 <body>
     <h1>Dashboard</h1>
-    <p>User: {{ user }}</p>
-    {% comment %} <p>School name: {{ school.name }}</p> {% endcomment %}
-    <p>Key: {{ key }}</p>
-    <p>Account Status: {{ key.status }}</p>
-    <p>Procurement Date: {{ key.date_of_procurement }}</p>
-    <p>Expiration Date: {{ key.expiry_date }}</p>
+        <table>
+        <tr>
+            <th>User</th>
+            <th>School</th>
+            <th>Key</th>
+            <th>Account Status</th>
+            <th>Procurement Date</th>
+            <th>Expiry Date</th>
+            {% if user.is_superuser %}
+              <th>Actions</th>
+            {% endif %}
+        </tr>
+    {% for key in list %}
+        <tr>
+            <td>{{user}}</td>
+            <td>{{ access_key.school }}</td>
+            <td>{{ access_key.key }}</td>
+            <td>{{ access_key.status }}</td>
+            <td>{{ access_key.date_of_procurement }}</td>
+            <td>{{ access_key.expiry_date }}</td>
+        </tr>
+    {% endfor %}
+</table>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+  
 </body>
 </html>

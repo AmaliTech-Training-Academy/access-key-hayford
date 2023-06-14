@@ -7,8 +7,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         model=Key
         fields = '__all__'
 
-    def create(self, **Kwargs):
-        instance = Key.objects.create(**Kwargs)# `**data` unpacks all the instances of the field
+    def create(self, Kwargs):
+        instance = Key.objects.create(**Kwargs)
         return instance
 
 
