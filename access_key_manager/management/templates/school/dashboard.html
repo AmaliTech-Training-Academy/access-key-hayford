@@ -5,6 +5,7 @@
 </head>
 <body>
     <h1>Dashboard</h1>
+    <span><a href="{% url 'management:key_request' school.pk %}">Request for Acess key</a></span>
         <table>
         <tr>
             <th>User</th>
@@ -17,7 +18,7 @@
               <th>Actions</th>
             {% endif %}
         </tr>
-    {% for key in list %}
+    {% for access_key in page_obj %}
         <tr>
             <td>{{user}}</td>
             <td>{{ access_key.school }}</td>

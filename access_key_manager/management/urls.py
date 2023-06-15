@@ -13,6 +13,6 @@ urlpatterns = [
     path('api/', AccessKeyViewAPI.as_view(), name='access_key_view_api'),
 
     path('school/', school_dashboard, name='school'),
-    path('<int:id>/list/', School_key_view, name='school_key_view'),
-    path('<int:id>/request/', key_request, name='key_request')
+    path('<int:pk>/list/', School_key_view, name='school_key_view'),
+    path('<int:school_id>/request/', key_request, name='key_request')
 ]
