@@ -3,7 +3,6 @@ import re
 class PasswordValidator:
     def validate(self, password, user=None):
         password_pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$'
-
         if not re.match(password_pattern, password):
             raise ValidationError(
                 'Password needs to have at minimum one uppercase letter, one lowercase letter, one digit, and one special character'

@@ -21,7 +21,7 @@ from management.models import School
 from django.urls import reverse
 
 # Create your views here.
-# @csrf_protect
+@csrf_protect
 def signup(request):
     form = SignupForm
     if request.method == 'POST':
@@ -104,15 +104,16 @@ def signin(request):
 
 
 
+@csrf_protect
 def signout(request):
     logout(request)
-    return redirect('/account/login/')
+    messages.info(request, 'You have logout successfully...')
+    return redirect('/key/')
     
      
 
-
 #intialization function depending on settings
-# @csrf_protect
+@csrf_protect
 def password_reset(request):
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
@@ -146,7 +147,7 @@ def password_reset(request):
 
 
 
-# @csrf_protect
+@csrf_protect
 def resetPage(request):
     if request.method == 'POST':
         password = request.POST['password']
@@ -162,13 +163,14 @@ def resetPage(request):
     return render(request, 'account/password/password_reset_form.html')
 
 
-# @csrf_protect
+
+@csrf_protect
 def resetPageDone(request):
      return render(request, 'account/password/password_reset_done.html')
 
 
 
-# @csrf_protect
+@csrf_protect
 def reset_password_confirm(request, uidb64, token):
     try:
         uid =force_str(urlsafe_base64_decode(uidb64))

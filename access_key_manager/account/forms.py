@@ -39,6 +39,7 @@ class PasswordChangeForm(forms.ModelForm):
         attrs={'autocomplete': 'new-password'}),
         label='New Confirm Password'
     )
+    
     class Meta:
         model = CustomUser
         fields = []

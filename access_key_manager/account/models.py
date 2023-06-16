@@ -35,6 +35,7 @@ class CustomUserManager(BaseUserManager):
             return user
         except:
             raise ValueError('An error occurred. Please,try again.')
+
             
         
 class CustomUser(AbstractUser):

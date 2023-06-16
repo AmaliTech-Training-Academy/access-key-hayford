@@ -1,7 +1,6 @@
 # import from rest_framework library
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import serializers
 from django.http import Http404
 from .serializers import *
 from django.shortcuts import render, redirect, get_object_or_404
@@ -15,9 +14,6 @@ from django.utils.html import strip_tags
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import *
-from django.contrib.auth.models import User
-from django.urls import reverse
-from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -29,6 +25,7 @@ def index(request):
     return render(request, 'management/index.html')
 
 
+
 @method_decorator(login_required, name='dispatch')
 class ListView(ListView):
     model = Key
@@ -36,7 +33,9 @@ class ListView(ListView):
     ordering = ['date_of_procurement']
     context_object_name = 'list'
     paginate_by = 5
-    
+
+
+
 @login_required
 def revoke_key(request, pk):
     access_key_by_id = get_object_or_404(Key, id=pk)
@@ -44,7 +43,8 @@ def revoke_key(request, pk):
     access_key_by_id.save()
     messages.success(request,'Access-key has been revoked successfully')
     return redirect('management:key_list')
-    # return render(request, 'management/key_list.html')
+
+
 
 @login_required
 def generate_key(request, pk):
@@ -55,7 +55,7 @@ def generate_key(request, pk):
         form = AccessKeyForm(request.POST)
         if form.is_valid():
             access_key =form.save(commit=False)
-            # access_key.key = form.generate_access_key()
+            access_key.key = form.generate_access_key()
             access_key.school = user_by_id
             access_key.user =user
             # if access_key.expiry_date and access_key.expiry_date < datetime.date.today():
@@ -81,6 +81,8 @@ def generate_key(request, pk):
             form = AccessKeyForm()
     return render(request, 'management/generate_access_key.html',{'form':form, 'schools': user_by_id})
 
+
+
 @login_required
 def update_key(request, pk):
     access_key = get_object_or_404(Key, id=pk)
@@ -99,6 +101,8 @@ def update_key(request, pk):
     else:
         form = AccessKeyForm(instance= access_key)
     return render(request, 'management/api_update_form.html', {'form':form, 'access_key': access_key})
+
+
 
 @method_decorator(login_required, name='dispatch')
 class AccessKeyViewAPI(APIView):
@@ -120,11 +124,11 @@ class AccessKeyViewAPI(APIView):
                 else:
                     return Http404
         return render(request, 'management/api_form.html', {'form': form})
-        
+
+
 
 #School Dashboard
-@login_required
-# @method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 def School_key_view(request, pk):
     user = request.user
     school = get_object_or_404(School, id=pk)
@@ -136,8 +140,8 @@ def School_key_view(request, pk):
     return render(request, 'school/dashboard.html', {'school':school, 'user':user, 'page_obj': page_object})
 
 
-# @method_decorator(login_required, name='dispatch')
-@login_required
+
+@method_decorator(login_required, name='dispatch')
 def school_dashboard(request):
     form = SchoolForm()
     if request.method == 'POST':
@@ -154,24 +158,13 @@ def school_dashboard(request):
     return render(request,'school/school_view.html', {'form':form})
 
 
-# def key_request(request, pk):
-#     school = School.objects.get(id=pk)
-#     context = {'school':school}
-#     return render(request, 'school/key_request.html', context)
-#     # return redirect('management:key_request', context )
-
-
 
 def key_request(request, school_id):
     school = School.objects.get(id=school_id)
     key = Key.objects.filter(school=school, status=Key.ACTIVE)
-    # key= get_object_or_404(school=school, status=Key.ACTIVE)
     if key:
-        # messages.warning(request, 'You have an active key already')
-        # return redirect('management:school_key_view', school_id=school.id)
         return HttpResponse('You have an active key already.')
     else:
         print(school.pk)
         return redirect('management:generate_key', pk=str(school.id))
-        # return HttpResponse('A new key will be created.')
         

@@ -22,9 +22,11 @@ class AccessKeyForm(forms.ModelForm):
 
 class SchoolForm(forms.ModelForm):
     name = forms.CharField()
+    
     class Meta:
         model=School
         fields=('name',) 
+
 
 
 class MailForm(forms.Form):
