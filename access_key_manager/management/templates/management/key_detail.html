@@ -44,7 +44,8 @@
             <td>{{ access_key.expiry_date }}</td>
             {% if user.is_superuser %}
                 <td>
-                    <a href="{% url 'management:update_key' access_key.pk %}">Update</a>
+                    <a href="{% url 'management:update_key' access_key.pk %}">Update</a> |
+                    <a href="{% url 'management:revoke_key' access_key.pk %}">Revoke</a>
               </td>
             {% endif %}
         </tr>

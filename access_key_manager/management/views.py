@@ -24,6 +24,11 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 
 # Create your views here.
+
+def index(request):
+    return render(request, 'management/index.html')
+
+
 @method_decorator(login_required, name='dispatch')
 class ListView(ListView):
     model = Key
@@ -143,7 +148,7 @@ def school_dashboard(request):
             school = School.objects.create(name=name, user=user)
             school.save()
             # return redirect(reverse('management:school_key_view', kwargs ={'pk':school.pk}))
-            return redirect('management:school_key_view', school_id=school.id)
+            return redirect('management:school_key_view', pk=school.pk)
         else:
             form = SchoolForm()
     return render(request,'school/school_view.html', {'form':form})

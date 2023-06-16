@@ -63,7 +63,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('management:school')
+        return redirect(reverse('management:school'))
         # return redirect('/key/school/')
         
     else:
@@ -93,7 +93,8 @@ def signin(request):
                 else:
                     school =School.objects.get(user=user)
                     # messages.success(request, 'Welcome, School IT Personnel!')
-                    return redirect('management:school_key_view',school_id=school.user)
+                    print(school.pk)
+                    return redirect('management:school_key_view', pk=str(school.pk))
                     # return render(request, 'school/dashboard.html', {'school':school})
                     # return HttpResponse('<h1>hello, School IT Personnel</h1>')
             else:
@@ -105,7 +106,8 @@ def signin(request):
 
 def signout(request):
     logout(request)
-    return redirect('/login/')
+    return redirect('/account/login/')
+    
      
 
 
