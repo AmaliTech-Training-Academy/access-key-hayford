@@ -48,8 +48,7 @@ INSTALLED_APPS = [
     'management',
   
 ]
-if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = ['https://access-key-hayford-production.up.railway.app/']
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,6 +60,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+]
+
+
+CSRF_TRUSTED_ORIGINS = ['https://access-key-hayford-production.up.railway.app/']
+
+
+CORS_ALLOWED_ORIGINS = [
+    'https://access-key-hayford-production.up.railway.app/'
 ]
 
 REST_FRAMEWORK = {
