@@ -49,6 +49,7 @@ INSTALLED_APPS = [
   
 ]
 
+CSRF_TRUSTED_ORIGINS = ['https://access-key-hayford-production.up.railway.app/']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
