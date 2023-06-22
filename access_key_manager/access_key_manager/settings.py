@@ -60,17 +60,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
 ]
 
 
-CSRF_TRUSTED_ORIGINS = ['https://access-key-hayford-production.up.railway.app/']
-
-
-CORS_ALLOWED_ORIGINS = [
+CSRF_TRUSTED_ORIGINS = [
     'https://access-key-hayford-production.up.railway.app/'
-]
+    ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSIONS_CLASSES': [
