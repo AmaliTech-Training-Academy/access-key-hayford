@@ -18,7 +18,7 @@ import os
 import sys
 from django.core.wsgi import get_wsgi_application
 
-path = '/home/microfocusinc/access-key-hayford/access_key_manager'
+path = 'access-key-hayford/access_key_manager'
 if path not in sys.path:
     sys.path.append(path)
 
