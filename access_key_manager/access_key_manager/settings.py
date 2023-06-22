@@ -68,9 +68,9 @@ MIDDLEWARE = [
 CSRF_TRUSTED_ORIGINS = ['https://access-key-hayford-production.up.railway.app/']
 
 
-CORS_ALLOWED_ORIGINS = [
-    'https://access-key-hayford-production.up.railway.app/'
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'https://access-key-hayford-production.up.railway.app/'
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSIONS_CLASSES': [
