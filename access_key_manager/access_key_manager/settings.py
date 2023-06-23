@@ -64,7 +64,8 @@ MIDDLEWARE = [
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://access-key-hayford-production.up.railway.app/'
+    'https://resilient-snake-production.up.railway.app/account/signup/',
+    'https://resilient-snake-production.up.railway.app/account/login/'
     ]
 
 
