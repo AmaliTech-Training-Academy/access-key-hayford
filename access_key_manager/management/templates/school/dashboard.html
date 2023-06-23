@@ -4,6 +4,7 @@
     <title>Dashboard</title>
 </head>
 <body>
+    <span><a href="{% url 'account:logout' %}">Logout</a></span>
     <h1>Dashboard</h1>
     <span><a href="{% url 'management:key_request' school.pk %}">Request for Acess key</a></span>
         <table>

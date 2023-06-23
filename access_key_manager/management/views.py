@@ -16,7 +16,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import *
 # from django.contrib.auth.models import User
-# from django.urls import reverse
+from django.urls import reverse
 # from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -62,10 +62,12 @@ def generate_key(request, pk):
             # if access_key.expiry_date and access_key.expiry_date < datetime.date.today():
             if access_key.expiry_date and access_key.expiry_date.date() < datetime.today().date():
                 messages.warning(request, 'Expiry date cannot be in the past')
-                return redirect('management:generate', user_by_id.id)
+                print(user_by_id)
+                return redirect('management:generate_key', user_by_id.user_id)
             else:
                 access_key.expiry_date = form.cleaned_data['expiry_date']
-            access_key.save()
+                print(access_key)
+                access_key.save()
 
             email_body = render_to_string('school/purchase_key_mail.html', {
                     'user': user,

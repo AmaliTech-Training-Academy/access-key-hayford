@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from .models import CustomUser
-from .validator import PasswordValidator
+from .validators import PasswordValidator
 
 class SignupForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=True)

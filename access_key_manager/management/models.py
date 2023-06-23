@@ -12,7 +12,7 @@ class Key(models.Model):
         (EXPIRED, 'Expired'),
         (REVOKED, 'Revoked'),
     ), default= ACTIVE)
-    key = models.CharField(max_length=32, unique=True)
+    key = models.CharField(max_length=32)
     date_of_procurement = models.DateTimeField(auto_now_add=True)
     expiry_date = models.DateTimeField()
     school = models.ForeignKey('School', on_delete=models.CASCADE,null=True,blank=True)

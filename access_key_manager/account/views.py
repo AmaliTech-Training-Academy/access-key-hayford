@@ -64,8 +64,7 @@ def activate(request, uidb64, token):
         user.save()
         login(request, user)
         return redirect(reverse('management:school'))
-        # return redirect('/key/school/')
-        
+
     else:
         return render(request, 'account/activation_404.html')
 

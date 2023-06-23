@@ -3,7 +3,7 @@
 {% if access_key %}
 <p>New access key generated: {{ access_key.key }}</p>
 {% endif %}
-
+{% comment %} <span><a href="{% url 'management:school_key_view' schools.pk %}">Previous Page</a></span> {% endcomment %}
 <form method="post">
     {% csrf_token %}
     <div>
