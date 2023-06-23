@@ -63,10 +63,7 @@ MIDDLEWARE = [
 ]
 
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://resilient-snake-production.up.railway.app/account/signup/',
-#     'https://resilient-snake-production.up.railway.app/account/login/'
-#     ]
+CSRF_TRUSTED_ORIGINS = ['*']
 
 
 REST_FRAMEWORK = {
