@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-f@m!ka-^v)%=fb_rj-oh0f76pclz=7urc2ay5ggr47d5y^@35v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['resilient-snake-production.up.railway.app', '127.0.0 .1']
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/account/login/'
 
@@ -63,10 +63,10 @@ MIDDLEWARE = [
 ]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://resilient-snake-production.up.railway.app/account/signup/',
-    'https://resilient-snake-production.up.railway.app/account/login/'
-    ]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://resilient-snake-production.up.railway.app/account/signup/',
+#     'https://resilient-snake-production.up.railway.app/account/login/'
+#     ]
 
 
 REST_FRAMEWORK = {
