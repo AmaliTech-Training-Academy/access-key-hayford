@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from .models import CustomUser
-from .validators import PasswordValidator
+from django.contrib.auth.password_validation import validate_password
 
 class SignupForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
-    confirmPassword = forms.CharField(widget=forms.PasswordInput, label='Confirm Password', required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True, validators=[validate_password])
+    confirmPassword = forms.CharField(widget=forms.PasswordInput, label='Confirm Password', required=True, validators=[validate_password])
     class Meta:
         model = CustomUser
         fields = [ 'email', 'password']
@@ -15,8 +15,6 @@ class SignupForm(forms.ModelForm):
         password2 = self.cleaned_data.get('confirmPassword')
         if password and password2 and password != password2:
             raise forms.ValidationError('Password does not match')
-        validator = PasswordValidator()
-        validator.validate(password)
         return password
     
 #function to set user to false until account is verified
