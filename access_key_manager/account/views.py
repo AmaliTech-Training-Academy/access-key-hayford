@@ -64,7 +64,6 @@ def activate(request, uidb64, token):
         user.save()
         login(request, user)
         return redirect(reverse('management:school'))
-
     else:
         return render(request, 'account/activation_404.html')
 
@@ -76,7 +75,6 @@ def signin(request):
     next_url = request.GET.get('next', '')
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
-        print(form.is_valid)
         if form.is_valid():
             email = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -88,17 +86,11 @@ def signin(request):
                 if user.is_superuser:
                     messages.success(request, 'Welcome, Micro-Focus Admin!')
                     return redirect('management:key_list')
-                    # return HttpResponse('<h1>hello</h1>')
                 else:
                     school =School.objects.get(user=user)
-                    # messages.success(request, 'Welcome, School IT Personnel!')
-                    print(school.pk)
                     return redirect('management:school_key_view', pk=str(school.pk))
-                    # return render(request, 'school/dashboard.html', {'school':school})
-                    # return HttpResponse('<h1>hello, School IT Personnel</h1>')
             else:
                 return render(request, 'account/login.html', {'form': form, 'error': 'Invalid login credentials', 'next': next_url})
-                # return HttpResponse('Bad credentials  - please try again - user_id')
     return render(request, 'account/login.html', {'form': form, 'next': next_url})
 
 
