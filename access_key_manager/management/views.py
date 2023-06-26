@@ -23,9 +23,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .key_generator import generate_access_key
+from account.models import CustomUser
+
 
 # Create your views here.
-
 def index(request):
     return render(request, 'management/index.html')
 
@@ -111,7 +112,7 @@ class AccessKeyViewAPI(APIView):
                 key = get_object_or_404(Key, school=school)
                 serializers = ProjectSerializer(key)
                 return Response(serializers.data)
-            except (School.DoesNotExist, CustomUser.DoesNotExist):
+            except ( Key.DoesNotExist, CustomUser.DoesNotExist):
                 if user.is_superuser:
                     return HttpResponse('<h2>Access denied for Mircro-Focus Administrator...</h2>')
                 else:
