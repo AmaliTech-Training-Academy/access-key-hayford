@@ -10,5 +10,5 @@ urlpatterns = [
     path('logout/', signout, name='logout'),
     path('password_reset/', password_reset, name='reset_page'),
     path('password_reset/done/', resetPageDone, name='reset_page_done'),
-    path('reset/<uidb64>/<token>', reset_password_confirm, name='reset_password_confirm'),
+    path('reset/<uidb64>/<token>', reset_password_confirm, name='password_reset_confirm'),
 ]

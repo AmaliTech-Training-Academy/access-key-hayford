@@ -31,17 +31,25 @@ class SignupForm(forms.ModelForm):
 class PasswordChangeForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={'autocomplete': 'new-password'}),
-        label='New Password'
+        label='New Password',
+        validators=[validate_password]
     )
     confirmPassword = forms.CharField(widget=forms.PasswordInput(
         attrs={'autocomplete': 'new-password'}),
-        label='New Confirm Password'
+        label='New Confirm Password',
+        validators=[validate_password]
     )
     
     class Meta:
         model = CustomUser
         fields = []
 
+    def save(self, commit=True):
+        new_password = super(PasswordChangeForm, self).save(commit=False)
+        new_password.set_password(self.cleaned_data['password'])
+        if commit:
+            new_password.save()
+        return new_password
 
 
 class LoginForm(AuthenticationForm):

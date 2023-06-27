@@ -20,6 +20,8 @@ from django.contrib import messages
 from management.models import School
 from django.urls import reverse
 
+
+
 # Create your views here.
 @csrf_protect
 def signup(request):
@@ -164,11 +166,12 @@ def resetPageDone(request):
 @csrf_protect
 def reset_password_confirm(request, uidb64, token):
     try:
-        uid =force_str(urlsafe_base64_decode(uidb64))
-        user = SignupForm.objects.get(pf=uid)
-    except(SignupForm.DoesNotExist, TypeError, ValueError, OverflowError):
+        uid =urlsafe_base64_decode(force_str(uidb64))
+        user =  CustomUser.objects.get(pk=uid)
+        print(uid)
+    except( CustomUser.DoesNotExist, TypeError, ValueError, OverflowError):
         user = None
-
+    
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == 'POST':
             form = PasswordChangeForm(request.POST)
@@ -176,10 +179,12 @@ def reset_password_confirm(request, uidb64, token):
                 new_password = form.cleaned_data.get('password')
                 user.set_password(new_password)
                 user.save()
-                user =authenticate(request, email=user.email, password=new_password)
-                login(request, user)
-                
-                return render(request, 'account/password/password_reset_complete.html')
+                if user.is_active:
+                    user_authorized =authenticate(request, email=user.email, password=new_password)
+                else:
+                    return HttpResponse('<h6>You have not activated your account. Please check your email to activate your account.</h6>')
+                login(request, user_authorized)
+            return render(request, 'account/password/password_reset_complete.html')
         else:
             form = PasswordChangeForm()
         return render(request, 'account/password/password_reset_confirm.html', {'form': form})

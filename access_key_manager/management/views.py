@@ -106,10 +106,13 @@ class AccessKeyViewAPI(APIView):
         form = MailForm(request.GET or None)
         if form.is_valid():
             email = form.cleaned_data['email']
+            print(email)
             try:
                 user = CustomUser.objects.get(email=email)
+                print('the user is {0}'.format(user))
                 school = School.objects.get(user=user)
                 key = get_object_or_404(Key, school=school)
+                # key = Key.objects.get(school=school)
                 serializers = ProjectSerializer(key)
                 return Response(serializers.data)
             except ( Key.DoesNotExist, CustomUser.DoesNotExist):
@@ -118,6 +121,22 @@ class AccessKeyViewAPI(APIView):
                 else:
                     return Http404
         return render(request, 'management/api_form.html', {'form': form})
+# class AccessKeyViewAPI(APIView):
+#     def get(self, request, format=None):
+#         form = MailForm(request.POST or None)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             print(email)
+#             try:
+#                 user=CustomUser.objects.get(email=email)
+#                 print('the user is {0}'.format(user))
+#                 school = School.objects.get(user=user)
+#                 key = Key.objects.get(school=school)
+#                 serializers = ProjectSerializer(key)
+#                 return Response(serializers.data)
+#             except ( Key.DoesNotExist, CustomUser.DoesNotExist):
+#                 return HttpResponse('<h2>Access denied for Mircro-Focus Administrator...</h2>')
+#         return render(request, 'management/api_form.html', {'form': form})
 
 
 #School Dashboard
