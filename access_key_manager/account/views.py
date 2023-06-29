@@ -141,6 +141,12 @@ def password_reset(request):
 
 
 @csrf_protect
+def resetPageDone(request):
+     return render(request, 'account/password/password_reset_done.html')
+
+
+
+@csrf_protect
 def resetPage(request):
     if request.method == 'POST':
         password = request.POST['password']
@@ -157,20 +163,19 @@ def resetPage(request):
 
 
 
-@csrf_protect
-def resetPageDone(request):
-     return render(request, 'account/password/password_reset_done.html')
+
 
 
 
 @csrf_protect
 def reset_password_confirm(request, uidb64, token):
     try:
-        uid =urlsafe_base64_decode(force_str(uidb64))
+        uid =urlsafe_base64_decode(force_str(uidb64)).decode()
         user =  CustomUser.objects.get(pk=uid)
         print(uid)
     except( CustomUser.DoesNotExist, TypeError, ValueError, OverflowError):
         user = None
+    # return user
     
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == 'POST':
