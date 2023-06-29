@@ -37,6 +37,7 @@ class ListView(ListView):
     context_object_name = 'list'
     paginate_by = 5
 
+
 @login_required
 def revoke_key(request, pk):
     access_key_by_id = get_object_or_404(Key, id=pk)
@@ -45,6 +46,7 @@ def revoke_key(request, pk):
     messages.success(request,'Access-key has been revoked successfully')
     return redirect('management:key_list')
     # return render(request, 'management/key_list.html')
+
 
 @login_required
 def generate_key(request, pk):
@@ -80,6 +82,7 @@ def generate_key(request, pk):
             form = AccessKeyForm()
     return render(request, 'management/generate_access_key.html',{'form':form, 'schools': user_by_id})
 
+
 @login_required
 def update_key(request, pk):
     access_key = get_object_or_404(Key, id=pk)
@@ -97,6 +100,7 @@ def update_key(request, pk):
     else:
         form = AccessKeyForm(instance= access_key)
     return render(request, 'management/api_update_form.html', {'form':form, 'access_key': access_key})
+
 
 @method_decorator(login_required, name='dispatch')
 class AccessKeyViewAPI(APIView):
@@ -118,8 +122,6 @@ class AccessKeyViewAPI(APIView):
                 else:
                     return Http404
         return render(request, 'management/api_form.html', {'form': form})
-
-
 
 
 #School Dashboard
