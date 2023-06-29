@@ -39,7 +39,13 @@
         <tr>
             <td>{{ access_key.key }}</td>
             <td>{{ access_key.school }}</td>
-            <td>{{ access_key.status }}</td>
+            <td>
+                {% if access_key.expiry_date < time %}
+                    Expired
+                {% else %}
+                    {{ access_key.status }}
+                {% endif %}
+            </td>
             <td>{{ access_key.date_of_procurement }}</td>
             <td>{{ access_key.expiry_date }}</td>
             {% if user.is_superuser %}

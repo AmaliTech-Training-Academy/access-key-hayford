@@ -1,7 +1,6 @@
 # import from rest_framework library
 from rest_framework.views import APIView
 from rest_framework.response import Response
-# from rest_framework import serializers
 from django.http import Http404
 from .serializers import *
 from django.shortcuts import render, redirect, get_object_or_404
@@ -15,15 +14,14 @@ from django.utils.html import strip_tags
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import *
-# from django.contrib.auth.models import User
 from django.urls import reverse
-# from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .key_generator import generate_access_key
 from account.models import CustomUser
+from django.utils import timezone
 
 
 # Create your views here.
@@ -60,9 +58,9 @@ def generate_key(request, pk):
             access_key.key = generate_access_key
             access_key.school = user_by_id
             access_key.user =user
-            if access_key.expiry_date and access_key.expiry_date.date() < datetime.today().date():
+            if access_key.expiry_date and access_key.expiry_date < timezone.now():
                 messages.warning(request, 'Expiry date cannot be in the past')
-                return redirect('management:generate_key', user_by_id.user_id)
+                return redirect('management:generate_key', user_by_id.id)
             else:
                 access_key.expiry_date = form.cleaned_data['expiry_date']
                 access_key.save()
@@ -88,7 +86,7 @@ def update_key(request, pk):
     if request.method == 'POST':
         form = AccessKeyForm(request.POST, instance= access_key)
         if form.is_valid():
-            if access_key.expiry_date and access_key.expiry_date.date() < datetime.today().date():
+            if access_key.expiry_date and access_key.expiry_date < timezone.now():
                 messages.warning(request, 'Expiry date cannot be in the past')
                 return redirect('management:update_key', access_key.pk)
             else:
@@ -109,11 +107,10 @@ class AccessKeyViewAPI(APIView):
             print(email)
             try:
                 user = CustomUser.objects.get(email=email)
-                print('the user is {0}'.format(user))
                 school = School.objects.get(user=user)
-                key = get_object_or_404(Key, school=school)
-                # key = Key.objects.get(school=school)
-                serializers = ProjectSerializer(key)
+                # key = get_object_or_404(Key, school=school)
+                key = Key.objects.filter(school=school)
+                serializers = ProjectSerializer(key, many=True)
                 return Response(serializers.data)
             except ( Key.DoesNotExist, CustomUser.DoesNotExist):
                 if user.is_superuser:
@@ -121,22 +118,8 @@ class AccessKeyViewAPI(APIView):
                 else:
                     return Http404
         return render(request, 'management/api_form.html', {'form': form})
-# class AccessKeyViewAPI(APIView):
-#     def get(self, request, format=None):
-#         form = MailForm(request.POST or None)
-#         if form.is_valid():
-#             email = form.cleaned_data['email']
-#             print(email)
-#             try:
-#                 user=CustomUser.objects.get(email=email)
-#                 print('the user is {0}'.format(user))
-#                 school = School.objects.get(user=user)
-#                 key = Key.objects.get(school=school)
-#                 serializers = ProjectSerializer(key)
-#                 return Response(serializers.data)
-#             except ( Key.DoesNotExist, CustomUser.DoesNotExist):
-#                 return HttpResponse('<h2>Access denied for Mircro-Focus Administrator...</h2>')
-#         return render(request, 'management/api_form.html', {'form': form})
+
+
 
 
 #School Dashboard
@@ -148,7 +131,8 @@ def School_key_view(request, pk):
     paginator = Paginator(key, 5)
     page_number = request.GET.get('page')
     page_object = paginator.get_page(page_number)
-    return render(request, 'school/dashboard.html', {'school':school, 'user':user, 'page_obj': page_object})
+    time = timezone.now()
+    return render(request, 'school/dashboard.html', {'school':school, 'user':user, 'page_obj': page_object, 'time':time})
 
 
 @login_required
@@ -168,11 +152,14 @@ def school_dashboard(request):
 
 
 def key_request(request, school_id):
-    school = School.objects.get(id=school_id)
-    key = Key.objects.filter(school=school, status=Key.ACTIVE)
-    # key= get_object_or_404(school=school, status=Key.ACTIVE)
+    # school = School.objects.get(id=school_id)
+    school = get_object_or_404(School, id=school_id)
+    key = Key.objects.filter(school=school, status=Key.ACTIVE).first()
     if key:
-        return HttpResponse('You have an active key already.')
+        if key.expiry_date > timezone.now():
+            return HttpResponse('You have an active key already.')
+        else:
+            return redirect('management:generate_key', pk=str(school.id))
     else:
         return redirect('management:generate_key', pk=str(school.id))
 
